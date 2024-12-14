@@ -1,0 +1,108 @@
+
+from googleapiclient.discovery import build
+from youtube_transcript_api import YouTubeTranscriptApi
+import pandas as pd
+import time
+from tqdm.notebook import tqdm_notebook
+from typing import List
+from lib.constants import BASE_DATA_PATH
+import os
+import json
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=".env")
+API_KEY = os.getenv("YOUTUBE_API_KEY")
+
+
+class YouTube:
+    def __init__(self,
+                 keywords: List[str],
+                 filename: str) -> None:
+
+        self.youtube = build('youtube', 'v3', developerKey=API_KEY)
+        self.keywords = keywords
+        self.json_path = os.path.join(BASE_DATA_PATH, f'{filename}.json')
+        self.csv_path = os.path.join(BASE_DATA_PATH, f'{filename}.csv')
+
+    def build_queries(self):
+        query_set = set()
+        for keyword in self.keywords:
+            query_set.add(f'"AI" OR "artifical intelligence" + "{keyword}"')
+        return query_set
+
+    def search_youtube(self):
+        video_info = {}
+        queries = self.build_queries()
+        for q in tqdm_notebook(queries,
+                               total=len(queries),
+                               desc="Fetching queries"):
+            request = self.youtube.search().list(
+                part='snippet',
+                q=q,
+                type='video',
+                order='relevance',
+                maxResults=50,
+            )
+            response = request.execute()
+            for item in response['items']:
+                video_id = item['id']['videoId']
+                title = item['snippet']['title']
+                if video_id not in video_info:
+                    video_info[video_id] = title
+            time.sleep(1)
+        return video_info
+
+    def get_transcript(self):
+        video_info = self.search_youtube()
+        video_df_list = []
+        video_json = {}
+        logs = {}
+
+        for id, title in tqdm_notebook(video_info.items(),
+                                       total=len(video_info),
+                                       desc="Extracting transcripts"):
+
+            video_url = f"https://www.youtube.com/watch?v={id}"
+            try:
+                transcript = YouTubeTranscriptApi.get_transcript(
+                    video_id=id,
+                    languages=["en", "fr", "de", "es", "it"])
+                text_formatted = ""
+                for i in transcript:
+                    text_formatted += ' ' + i['text']
+
+                # Adding data to the pandas dataframe
+                df_item = {
+                    'video_id': id,
+                    'title': title,
+                    'url': video_url,
+                    'transcript': text_formatted,
+                    }
+                video_df_list.append(df_item)
+
+                # Adding data to the json file
+                video_json[id] = {
+                    'title': title,
+                    'url': video_url,
+                    'transcript': text_formatted
+                }
+            except Exception as e:
+                logs[id] = {
+                    'error_message': str(e)
+                }
+                pass
+
+        # Save error logs
+        with open(os.path.join(BASE_DATA_PATH, 'logs/log.json'),
+                  'w',
+                  encoding='utf-8') as json_log:
+            json_log.write(json.dumps(logs, indent=4))
+
+        # Save youtube data to a json file
+        with open(self.json_path, 'w', encoding='utf-8') as json_file:
+            json_file.write(json.dumps(video_json, indent=4))
+
+        # Save youtube data to a csv file
+        df = pd.DataFrame(video_df_list)
+        df.to_csv(self.csv_path, index=False)
+        print("Completed")

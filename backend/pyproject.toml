@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "disaster_management"
+version = "0.1.0"
+description = "AI assistant to get relevant YouTube videos on AI applications and technologies for \"Disaster & Emergency Management\" and \"Health, Safety & Environment (HSE)\""
+authors = ["Sharuka Thirimanne"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
+langchain = "0.3.7"
+langchain-community = "0.3.5"
+langchain-huggingface = "0.1.2"
+langchain-ollama = "0.2.0"
+onnxruntime = "1.19.2"
+huggingface-hub = "0.26.2"
+ollama = "0.4.2"
+datasets = "3.1.0"
+cohere = "5.11.3"
+accelerate = "1.1.1"
+numpy = "1.26.4"
+openai = "1.54.3"
+pandas = "^2.2.3"
+python-dotenv = "^1.0.1"
+langchain-qdrant = "^0.2.0"
+tqdm = "^4.67.1"
+langchain-cohere = "0.3.1"
+flask = "^3.1.0"
+flask-cors = "^5.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

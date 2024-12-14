@@ -1,0 +1,8 @@
+frontend/node_modules
+
+db
+backend/qdrant
+backend/.env
+
+analyse/.env
+analyse/data
