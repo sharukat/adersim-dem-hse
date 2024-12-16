@@ -31,6 +31,7 @@ class VectorDB:
                 'video_id': row.video_id,
                 'title': row.title,
                 'url': row.url,
+                # 'thumbnail': row.thumbnails,
             },
             id=index,
         )

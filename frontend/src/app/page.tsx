@@ -1,6 +1,4 @@
 // app/page.tsx
-import Image from "next/image";
-import Hero from "@/components/Hero";
 import ChatInput from "@/components/Chat";
 import questionsData from '@/lib/sample_questions.json';
 import { Questions } from '@/lib/typings';

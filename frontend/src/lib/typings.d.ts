@@ -11,3 +11,9 @@ export interface Questions{
   category: string;
   questions: string[];
 };
+
+export interface Videos{
+  title: string;
+  url: string;
+  video_id: string;
+}

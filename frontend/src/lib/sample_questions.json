@@ -1,45 +1,23 @@
 {
     "all_questions": [
         {
-            "category": "Legal and Policy Perspectives",
+            "category": "Disaster and Emergency Management",
             "questions": [
-                "What are the legal consequences of drink-driving?",
-                "What countries have the toughest drink-drive rules?",
-                "What countries have the lowest drink-drive rules?",
-                "What is the effectiveness of zero-tolerance alcohol policies for drivers under the age of 21?",
-                "How do licensing laws and restrictions impact drink-driving behaviors among new drivers in the youth category?",
-                "How do legal consequences for drink-driving vary across countries, and what is their impact on youth behavior?"
+                "How can AI improve disaster management and response efficiency?",
+                "In what ways can AI help in predicting and mitigating natural and human-made disasters?",
+                "How can AI support emergency preparedness and public health during crises?",
+                "How can AI enhance the effectiveness of search and rescue operations?",
+                "What role can AI play in disaster risk assessment and recovery?"
             ] 
         },
         {
-            "category": "Social and Cultural Influences",
+            "category": "Health, Safety and Environment",
             "questions": [
-                "How do cultural attitudes toward alcohol consumption influence youth drink-driving behaviors?",
-                "What role do parental monitoring and guidance play in preventing drink-driving among youth?",
-                "What role does media coverage of drink-driving incidents play in shaping youth attitudes and awareness?",
-                "How does peer influence affect youth decisions to engage in drink-driving?",
-                "How do socioeconomic factors influence drink-driving behaviors among youth?",
-                "How do gender differences influence patterns of drink-driving among youth?"
-            ]
-        },
-        {
-            "category": "Public Awareness and Education",
-            "questions": [
-                "How effective are school-based educational programs in reducing drink-driving incidents among youth?",
-                "What role do schools play in reducing drink-driving?",
-                "How can virtual reality (VR) tools be used to simulate the consequences of drink-driving for youth education?",
-                "How do youth interpret messages in public service announcements about the dangers of drink-driving?",
-                "What are the roles of schools in reducing drink-driving?",
-                "What are the most effective drink-driving interventions?"
-            ]
-        },
-        {
-            "category": "Psychological and Behavioral Aspects",
-            "questions": [
-                "What are the most common misconceptions among youth regarding their ability to drive after consuming alcohol?",
-                "How do youth perceive the risks of drink-driving compared to other risky behaviors?",
-                "What are the long-term psychological impacts on youth involved in drink-driving accidents, either as drivers or victims?",
-                "What is the relationship between peer influence and youth decisions to engage in drink-driving?"
+                "How can AI improve workplace safety and risk management?",
+                "What role can AI play in environmental protection and sustainability efforts?",
+                "How can AI support the monitoring and prevention of health hazards in workplaces?",
+                "In what ways can AI help with incident reporting and accident prevention?",
+                "How can AI contribute to improving overall safety protocols and compliance in various industries?"
             ]
         }
     ]

@@ -13,10 +13,9 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { Questions, SelectedQuestion } from "@/lib/typings";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useAnswerGeneration } from "@/lib/hooks";
 import VideoOutput from "./Videos";
-
 
 type Props = {
   Samples: Questions[];
@@ -85,8 +84,13 @@ export default function ChatInput({ Samples = [] }: Props) {
   };
 
   // Activating the hooks
-  const { words, isLoading, setIsLoading, generateText, setAnswerStates } =
-    useAnswerGeneration(userInput, selectedTab);
+  const {
+    words,
+    metaData,
+    isLoading,
+    generateText,
+    setAnswerStates,
+  } = useAnswerGeneration(userInput, selectedTab);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -153,13 +157,16 @@ export default function ChatInput({ Samples = [] }: Props) {
   ]);
 
   return (
-    <section key="chat" className="w-full flex flex-col items-center justify-center">
+    <section
+      key="chat"
+      className="w-full flex flex-col items-center justify-center"
+    >
       <Toaster position="bottom-right" reverseOrder={false} />
       <div className="w-[80%] flex flex-col justify-center items-center overflow-hidden">
         <h2 className="p-4 text-xl text-center sm:text-3xl">
           Ask Me Questions
         </h2>
-        <div className="px-4 flex flex-col gap-4 mb-4 items-center justify-center">
+        <div className="px-4 w-full flex flex-col gap-4 mb-4 items-center justify-center">
           <div className="flex flex-col items-center">
             <p className="mb-2">Choose Your Preferred Response Language:</p>
             <Tabs
@@ -178,14 +185,13 @@ export default function ChatInput({ Samples = [] }: Props) {
             </Tabs>
           </div>
 
-          <div className="px-4 w-full mb-4">
             <LLMInput
               externalInput={userInput}
               placeholders={placeholders}
               onChange={handleChange}
               onSubmit={onSubmit}
             />
-          </div>
+
           <div className="flex flex-row flex-wrap items-center justify-center gap-4">
             {memoizedDropdowns}
           </div>
@@ -205,10 +211,11 @@ export default function ChatInput({ Samples = [] }: Props) {
           </div>
         )}
       </div>
-
-      <div className="w-[80%] flex flex-col mt-4">
-        <VideoOutput />
-      </div>
+      {isTextAnimationComplete && metaData.length > 0 && (
+        <div className="w-[80%] flex flex-col mt-4">
+          <VideoOutput cards={metaData} />
+        </div>
+      )}
     </section>
   );
 }

@@ -47,8 +47,11 @@ class YouTube:
             for item in response['items']:
                 video_id = item['id']['videoId']
                 title = item['snippet']['title']
+                thumbnail = item['snippet']['thumbnails']['url']
                 if video_id not in video_info:
-                    video_info[video_id] = title
+                    video_info[video_id] = {
+                        'title': title,
+                        'thumbnail': thumbnail}
             time.sleep(1)
         return video_info
 
@@ -58,9 +61,9 @@ class YouTube:
         video_json = {}
         logs = {}
 
-        for id, title in tqdm_notebook(video_info.items(),
-                                       total=len(video_info),
-                                       desc="Extracting transcripts"):
+        for id, item in tqdm_notebook(video_info.items(),
+                                      total=len(video_info),
+                                      desc="Extracting transcripts"):
 
             video_url = f"https://www.youtube.com/watch?v={id}"
             try:
@@ -74,16 +77,18 @@ class YouTube:
                 # Adding data to the pandas dataframe
                 df_item = {
                     'video_id': id,
-                    'title': title,
+                    'title': item.title,
                     'url': video_url,
+                    'thumbnail': item.thumbnail,
                     'transcript': text_formatted,
                     }
                 video_df_list.append(df_item)
 
                 # Adding data to the json file
                 video_json[id] = {
-                    'title': title,
+                    'title': item.title,
                     'url': video_url,
+                    'thumbnail': item.thumbnail,
                     'transcript': text_formatted
                 }
             except Exception as e:

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 
 export const useAnswerGeneration = (question: string, language: string) => {
   const [words, setWords] = useState(() => {return ''});
+  const [metaData, setmetaData] = useState(() => {return []})
   const [isLoading, setIsLoading] = useState(() => {return false});
 
   const generateText = useCallback(async () => {
@@ -18,8 +19,11 @@ export const useAnswerGeneration = (question: string, language: string) => {
       });
 
       const data = await response.json();
-      if (data.response && data.response[0]) {
-        setWords(data.response[0]);
+      console.log(data)
+      if (data.response) {
+        
+        setWords(data.response);
+        setmetaData(data.meta_data);
         toast.success("Answer Generation Successful");
       } else {
         toast.error("Received invalid response format from server");
@@ -36,9 +40,10 @@ export const useAnswerGeneration = (question: string, language: string) => {
   const setAnswerStates = useCallback(() => {
     setWords("");
     setIsLoading(true);
+    setmetaData([])
   }, []);
 
-  return { words, isLoading, setIsLoading, generateText, setAnswerStates };
+  return { words, metaData, isLoading, generateText, setAnswerStates };
 };
 
 

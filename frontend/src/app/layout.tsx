@@ -23,7 +23,7 @@ export default function RootLayout({
           <div className="w-[80%]">
             <Navigationbar />
           </div>
-          <main>
+          <main className='min-h-screen flex-grow'>
             {children}
           </main>
           <Footer />

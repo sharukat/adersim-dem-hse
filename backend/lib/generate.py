@@ -1,4 +1,5 @@
 import os
+
 # import re
 from typing import List
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain.retrievers import contextual_compression
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain.retrievers.multi_query import MultiQueryRetriever
+from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from langchain_core.output_parsers import StrOutputParser, BaseOutputParser
 
 # Load environmental variables
@@ -17,22 +19,24 @@ os.environ["LANGCHAIN_TRACING_V2"] = os.getenv("LANGCHAIN_TRACING_V2")
 os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
 os.environ["LANGCHAIN_ENDPOINT"] = os.getenv("LANGCHAIN_ENDPOINT")
 os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
-# os.environ["COHERE_API_KEY"] = os.getenv("COHERE_API_KEY")
+os.environ["COHERE_API_KEY"] = os.getenv("COHERE_API_KEY")
 
 
 class Chat:
     def __init__(self, model: str) -> None:
         self.model_name = os.getenv("LLM")
         self.model = ChatOllama(
-            model=self.model_name,
-            base_url=os.getenv("OLLAMA_BASE_URL"))
+            model=self.model_name, base_url=os.getenv("OLLAMA_BASE_URL")
+        )
         self.embedding_function = OllamaEmbeddings(model=self.model_name)
-        # self.vectordb = Qdrant.from_existing_collection(
-        #     path=models["Qwen2.5-32b"]["db"],
-        #     collection_name="youtube_collection",
-        #     embedding=self.embedding_function,
-        # )
-        # self.multi_query_llm = ChatOllama(model="llama3.2:3b")
+        self.vectordb = QdrantVectorStore.from_existing_collection(
+            embedding=OllamaEmbeddings(model="qwen2.5:32b"),
+            collection_name="youtube_collection",
+            url="http://localhost:6333",
+            retrieval_mode=RetrievalMode.DENSE,
+        )
+
+        self.multi_query_llm = ChatOllama(model="llama3.2:3b")
 
     def retriever(self, question: str):
 
@@ -65,7 +69,7 @@ class Chat:
                 search_type="mmr", search_kwargs={"k": 20, "fetch_k": 50}
             ),
             llm_chain=llm_chain,
-            parser_key="lines"
+            parser_key="lines",
         )
 
         compressor = CohereRerank(model="rerank-multilingual-v3.0", top_n=10)
@@ -83,29 +87,32 @@ class Chat:
         return reranked_docs
 
     def generate(self, question: str, language: str):
-        # urls_set = set()
-        # urls_list = []
-        # context = []
-        # docs = self.retriever(question=question)
-        # for doc in docs:
-        #     url = doc.metadata["url"]
-        #     if url not in urls_set:
-        #         urls_set.add(url)
-        #         urls_list.append(url)
+        urls_set = set()
+        metadata_list = []
+        context = []
+        docs = self.retriever(question=question)
+        for doc in docs:
+            url = doc.metadata["url"]
+            if url not in urls_set:
+                urls_set.add(url)
+                metadata_list.append({
+                    'urls': url,
+                    'title': doc.metadata['title'],
+                    'video_id': doc.metadata['video_id']})
 
         #     page_content = re.sub(r"Comment:\s*\d+", "", doc.page_content)
-        #     context.append(page_content)
+            context.append(doc.page_content)
 
-        # context = "\n\n".join(context)
+        context = "\n\n".join(context)
 
         prompt = PromptTemplate.from_template(
-            """You are an expert in providing information on drink driving.
+            """You are an expert in providing information on AI applications
+            and technologies for "Disaster and Emergency Management, and
+            Health, Safety and Environment (HSE).
 
-            Provide a Comprehensive Response If the question is related to
-            drink driving:
-                - First, lets think step by step. - Provide a detailed and
-                 descriptive explanation in `{language}` based ONLY on the
-                 context, adopting a formal tone.\n\n
+            First, lets think step by step. - Provide a detailed and
+            descriptive explanation in `{language}` based ONLY on the
+            context, adopting a formal tone.\n\n
 
             Question:
             `{question}`."""
@@ -113,8 +120,5 @@ class Chat:
 
         chain = prompt | self.model | StrOutputParser()
 
-        response = chain.invoke(
-            {"language": language, "question": question}
-        )
-        print(response)
-        return response
+        response = chain.invoke({"language": language, "question": question})
+        return {'response': response, 'meta_data': metadata_list}

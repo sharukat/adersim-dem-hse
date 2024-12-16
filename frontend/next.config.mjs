@@ -12,6 +12,11 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'nextui.org',
                 pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.ytimg.com',
+                pathname: '**'
             }
         ]
     }

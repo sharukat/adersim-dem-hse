@@ -24,12 +24,6 @@ export const TextGenerateEffect = ({
   const blocks = words.split("\n\n").filter(block => block.trim());
 
   useEffect(() => {
-    // Calculate total animation duration
-    const totalAnimationDuration = blocks.reduce((acc, block) => {
-      const wordCount = block.split(" ").filter(word => word).length;
-      return Math.max(acc, (wordCount * staggerDelay) + duration);
-    }, 0);
-
     // Perform animation
     const animationSequence = async () => {
       await animate(

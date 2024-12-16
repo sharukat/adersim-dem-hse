@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useId } from "react";
-import {
-  Card,
-  CardFooter,
-  Button,
-  Link,
-} from "@nextui-org/react";
+import { Link } from "@nextui-org/react";
 import { useOutsideClick } from "@/lib/hooks";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { Videos } from "@/lib/typings";
+import { decodeHtmlEntities } from "@/lib/utils";
 
-export default function VideoOutput() {
+type Props = {
+  cards: Videos[];
+};
+// 
+export default function VideoOutput({ cards }: Props) {
   const [active, setActive] = useState<(typeof cards)[number] | boolean | null>(
     null
   );
@@ -64,9 +64,12 @@ export default function VideoOutput() {
 
   return (
     <>
-      <h2 className="my-20 md:text-4xl text-center text-2xl">
+      <h2 className="mt-20 md:text-4xl text-center text-2xl">
         Watch Related Videos
       </h2>
+      <p className="mb-20 text-center text-sm">
+        Click on a title to watch the video
+      </p>
       <AnimatePresence>
         {active && typeof active === "object" && (
           <motion.div
@@ -83,7 +86,7 @@ export default function VideoOutput() {
             <motion.div
               layoutId={`card-${active.title}-${id}`}
               ref={ref}
-              className="w-[80%] max-h-[80%] flex bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden"
+              className="w-[80%] max-h-[85%] flex flex-col bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden"
             >
               <motion.div
                 layoutId={`image-${active.title}-${id}`}
@@ -95,44 +98,43 @@ export default function VideoOutput() {
                   src={`https://www.youtube.com/embed/${active.video_id}`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  referrerPolicy="no-referrer"
                 />
               </motion.div>
             </motion.div>
           </div>
         ) : null}
       </AnimatePresence>
-      <ul className="w-full mx-auto grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 items-start gap-4">
+      <ul className="max-w-[80%] mx-auto w-full gap-4">
         {cards.map((card, index) => (
           <motion.div
             layoutId={`card-${card.title}-${id}`}
-            key={card.title}
+            key={index}
             onClick={() => setActive(card)}
-            className="p-4 flex flex-col  hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
+            className="p-4 flex flex-col md:flex-row justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
           >
-            <Card className="border-none" radius="lg">
-              <Image
-                alt="Woman listing to music"
-                className="object-cover"
-                height={300}
-                src="https://nextui.org/images/hero-card.jpeg"
-                width={300}
-              />
-              <CardFooter className="justify-between">
-                <p className="text-sm">{card.title}</p>
-                <Button
-                  isExternal
-                  className="text-sm bg-black/20"
-                  color="default"
-                  radius="lg"
-                  size="sm"
-                  as={Link}
-                  variant="flat"
-                  href={`https://youtube.com/watch?v=${card.video_id}`}
+            <div className="flex gap-4 flex-col md:flex-row ">
+              <div className="">
+                <motion.h3
+                  layoutId={`title-${card.title}-${id}`}
+                  className="font-medium text-neutral-800 dark:text-neutral-200 text-center md:text-left"
                 >
-                  Visit
-                </Button>
-              </CardFooter>
-            </Card>
+                  {decodeHtmlEntities(card.title)}
+                </motion.h3>
+              </div>
+            </div>
+            <Link
+              href={`https://youtube.com/watch?v=${card.video_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <motion.button
+                layoutId={`button-${card.title}-${id}`}
+                className="px-4 py-2 text-sm rounded-full font-bold bg-gray-100 hover:bg-green-500 hover:text-white text-black mt-4 md:mt-0"
+              >
+                Visit
+              </motion.button>
+            </Link>
           </motion.div>
         ))}
       </ul>
@@ -140,34 +142,23 @@ export default function VideoOutput() {
   );
 }
 
-const cards = [
-  {
-    title: "Summertime Sadness",
-    src: "https://assets.aceternity.com/demos/lana-del-rey.jpeg",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    video_id: "ogfYd705cRs",
-  },
-  {
-    title: "Mitran Di Chhatri",
-    src: "https://assets.aceternity.com/demos/babbu-maan.jpeg",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    video_id: "ogfYd705cRs",
-  },
+// const cards = [
+//   {
+//     title:
+//       "Can AI predict Natural Disasters? Exploring Earthquakes, Hurricanes &amp; Floods",
+//     video_id: "ogfYd705cRs",
+//   },
+//   {
+//     title: "Mitran Di Chhatri",
+//     video_id: "ogfYd705cRs",
+//   },
 
-  {
-    title: "For Whom The Bell Tolls",
-    src: "https://assets.aceternity.com/demos/metallica.jpeg",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    video_id: "ogfYd705cRs",
-  },
-  {
-    title: "Aap Ka Suroor",
-    src: "https://assets.aceternity.com/demos/aap-ka-suroor.jpeg",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    video_id: "ogfYd705cRs",
-  },
-];
+//   {
+//     title: "For Whom The Bell Tolls",
+//     video_id: "ogfYd705cRs",
+//   },
+//   {
+//     title: "Aap Ka Suroor",
+//     video_id: "ogfYd705cRs",
+//   },
+// ];
