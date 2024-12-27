@@ -24,6 +24,9 @@ langchain-community = "0.3.5"
 langdetect = "^1.0.9"
 onnxruntime = "1.19.2"
 qdrant-client = "^1.12.1"
+setfit = "^1.1.0"
+accelerate = "^1.2.1"
+transformers = "4.42.2"
 
 
 [build-system]

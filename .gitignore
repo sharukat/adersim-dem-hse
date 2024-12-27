@@ -6,3 +6,4 @@ backend/.env
 
 analyse/.env
 analyse/data
+analyse/checkpoints

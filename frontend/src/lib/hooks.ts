@@ -18,6 +18,8 @@ export const useAnswerGeneration = (question: string, language: string) => {
         body: JSON.stringify({ question: question, language: language })
       });
 
+
+      console.log(response)
       const data = await response.json();
       console.log(data)
       if (data.response) {

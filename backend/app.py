@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
-from lib.generate import Chat
+from src.generate import Chat
 from flask_cors import CORS
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 CORS(
@@ -19,6 +22,7 @@ def generate_answer_endpoint():
         data = request.get_json()
         question = data.get("question", "")
         language = data.get("language", "")
+        logging.info(data)
 
         if not question or not language:
             return jsonify({"error": "Question & language are required"}), 400
@@ -29,6 +33,7 @@ def generate_answer_endpoint():
             "response": response["response"],
             "meta_data": response["meta_data"]})
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 

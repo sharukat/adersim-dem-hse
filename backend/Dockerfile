@@ -1,16 +1,13 @@
-FROM python:3.9
+FROM python:3.11
 
 WORKDIR /app
 
-RUN pip install poetry==1.8.5
+COPY ./requirements.txt /app
 
-COPY pyproject.toml poetry.lock* ./
-
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi
+RUN pip install -r requirements.txt
 
 COPY . /app
 
 EXPOSE 50001
 
-CMD ["poetry", "run", "python", "./app.py"]
+CMD ["python", "app.py"]

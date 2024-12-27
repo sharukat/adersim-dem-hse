@@ -1,0 +1,52 @@
+services:
+  qdrant-db:
+    image: qdrant/qdrant
+    restart: always
+    container_name: qdrant-db
+    volumes:
+      - ./db/qdrant-llama-3.3-70b:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    networks:
+      - adersim-net
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend-dem-hse
+    volumes:
+      - ./backend/lib:/app/lib
+    ports:
+      - "50001:50001"
+    networks:
+      - adersim-net
+    depends_on:
+      - ollama
+      - qdrant-db
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - /usr/share/ollama/.ollama/models:/root/.ollama
+    ports:
+      - "11434:11434"
+    pull_policy: always
+    tty: true
+    restart: always
+    networks:
+      - adersim-net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    depends_on:
+      - qdrant-db
+
+networks:
+  adersim-net:
