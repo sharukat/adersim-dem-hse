@@ -1,1 +1,17 @@
-apiV
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qdrant-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qdrant-db
+  template:
+    metadata:
+      labels:
+        app: qdrant-db
+    spec:
+      containers:
+        - name: qdrant-db
+          image: qdrant/qdrant
