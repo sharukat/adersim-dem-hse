@@ -46,4 +46,5 @@ In fields like DEM and HSE, timely and accurate access to information can be cri
 </p>
 
 ## 📹 Demo
-![dem_hse_trimmed-latest](https://github.com/user-attachments/assets/8111149f-dd40-423a-9f78-e538eeda493b)
+![dem_hse_trimmed-latest](https://github.com/user-attachments/assets/16c808b3-082d-41af-8e7e-a0e1a69e1ffd)
+
